@@ -5,7 +5,7 @@ const client = new Sequelize(connectionString, {})
 
 const persist = async (callback = () => {}) => {
   await client.sync({ force: false })
-  callback()
+  return callback()
 }
 
 module.exports = {
