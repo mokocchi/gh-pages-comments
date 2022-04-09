@@ -3,12 +3,12 @@ const {
   Model
 } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
-  class Comment extends Model {
+  class Reply extends Model {
     static associate (models) {
-      Comment.belongsTo(models.Post)
+      Reply.belongsTo(models.Comment)
     }
   }
-  Comment.init({
+  Reply.init({
     uid: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'Comment'
+    modelName: 'Reply'
   })
-  return Comment
+  return Reply
 }
