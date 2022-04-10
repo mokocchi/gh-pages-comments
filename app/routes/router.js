@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const commentsService = require('./commentsService')
+const postsService = require('./postsService')
+const usersService = require('./usersService')
 
 router.use((req, res, next) => {
   console.log(`Called: ${req.method} ${req.path}`)
@@ -15,5 +17,7 @@ router.use(function (req, res, next) {
 })
 
 router.use(commentsService)
+// router.use(postsService)
+router.use(usersService)
 
 module.exports = router

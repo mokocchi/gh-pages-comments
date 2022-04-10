@@ -12,7 +12,7 @@ router.post('/token',
   ],
   (req, res) => {
     persist(() => {
-      User.findOne({ where: { username: req.params.username } })
+      User.findOne({ where: { username: req.body.username } })
         .then(async result => {
           if (result == null) {
             res.status(400).json({
@@ -20,7 +20,12 @@ router.post('/token',
               code: 'auth_error'
             })
           } else {
-            if (!await result.validPassword(req.body.username, result.password)) {
+            if (!await result.validPassword(req.body.password, result.password)) {
+              res.status(400).json({
+                status: 'error',
+                code: 'auth_error'
+              })
+            } else {
               res.status(200).json({
                 status: 'authenticated',
                 token: 'JWT'
@@ -32,3 +37,5 @@ router.post('/token',
       console.log(err)
     })
   })
+
+module.exports = router

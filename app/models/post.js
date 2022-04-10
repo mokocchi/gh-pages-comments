@@ -16,28 +16,28 @@ module.exports = (sequelize, DataTypes) => {
     allowComments: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: false
+      defaultValue: false,
+      set (value) {
+        this.setDataValue('allowComments', value)
+      },
+      get () {
+        return this.getDataValue('allowComments')
+      }
     },
     showComments: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: false
+      defaultValue: false,
+      set (value) {
+        this.setDataValue('showComments', value)
+      },
+      get () {
+        return this.getDataValue('showComments')
+      }
     }
   }, {
     sequelize,
     modelName: 'Post'
   })
-  Post.prototype.allowComments = () => {
-    this.allowComments = true
-  }
-  Post.prototype.disallowComments = () => {
-    this.allowComments = false
-  }
-  Post.prototype.showComments = () => {
-    this.showComments = true
-  }
-  Post.prototype.hideComments = () => {
-    this.showComments = false
-  }
   return Post
 }

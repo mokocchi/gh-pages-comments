@@ -19,6 +19,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     }
   }, {
+    instanceMethods: {
+      validPassword: (password) => {
+        return bcrypt.compareSync(password, this.password)
+      }
+    },
     hooks: {
       beforeCreate: async (user) => {
         if (user.password) {
@@ -33,12 +38,6 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
-    instanceMethods: {
-      validPassword: (password) => {
-        return bcrypt.compareSync(password, this.password)
-      }
-    }
-  }, {
     sequelize,
     modelName: 'User'
   })
