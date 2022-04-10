@@ -10,4 +10,4 @@ RUN npm install
 
 COPY ./app .
 
-CMD [ "sh", "-c", "npx sequelize-cli db:migrate && node server.js" ]
+CMD [ "sh", "-c", "npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all && node server.js" ]
