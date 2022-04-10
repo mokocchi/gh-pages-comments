@@ -3,6 +3,7 @@ const { body } = require('express-validator')
 const router = express.Router()
 const { persist } = require('../sequelizeClient')
 const { sequelize } = require('../models')
+const jwt = require('jsonwebtoken')
 const User = sequelize.models.User
 
 router.post('/token',
@@ -28,7 +29,10 @@ router.post('/token',
             } else {
               res.status(200).json({
                 status: 'authenticated',
-                token: 'JWT'
+                token: jwt.sign({
+                  name: result.username,
+                  id: result.id
+                }, process.env.TOKEN_SECRET)
               })
             }
           }

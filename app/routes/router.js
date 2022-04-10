@@ -17,7 +17,7 @@ router.use(function (req, res, next) {
 })
 
 router.use(commentsService)
-// router.use(postsService)
+router.use(postsService)
 router.use(usersService)
 
 module.exports = router
