@@ -1,7 +1,7 @@
 'use strict'
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('Post', {
+    await queryInterface.createTable('Posts', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -21,7 +21,7 @@ module.exports = {
         type: Sequelize.DATE
       }
     })
-    await queryInterface.createTable('Comment', {
+    await queryInterface.createTable('Comments', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -50,7 +50,7 @@ module.exports = {
         type: Sequelize.DataTypes.INTEGER,
         references: {
           model: {
-            tableName: 'Post',
+            tableName: 'Posts',
             schema: 'public'
           },
           key: 'id'
@@ -66,7 +66,7 @@ module.exports = {
         type: Sequelize.DATE
       }
     })
-    await queryInterface.createTable('Reply', {
+    await queryInterface.createTable('Replies', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -95,7 +95,7 @@ module.exports = {
         type: Sequelize.DataTypes.INTEGER,
         references: {
           model: {
-            tableName: 'Comment',
+            tableName: 'Comments',
             schema: 'public'
           },
           key: 'id'
@@ -113,8 +113,8 @@ module.exports = {
     })
   },
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('Reply')
-    await queryInterface.dropTable('Comment')
-    await queryInterface.dropTable('Post')
+    await queryInterface.dropTable('Replies')
+    await queryInterface.dropTable('Comments')
+    await queryInterface.dropTable('Posts')
   }
 }

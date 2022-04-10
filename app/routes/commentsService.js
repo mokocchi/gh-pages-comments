@@ -1,20 +1,55 @@
 const express = require('express')
-const { check } = require('express-validator')
+const { param, body } = require('express-validator')
 const router = express.Router()
 const { persist } = require('../sequelizeClient')
 const { sequelize } = require('../models')
 const Comment = sequelize.models.Comment
+const Post = sequelize.models.Post
 
-router.get('/get_comments/:post', (req, res) => {
-  return res.status(200).json({
-    status: 'OK'
+router.get('/get_comments/:post',
+  [
+    param('post').whitelist(['abcdefghijklmnñopqrstuvwxyz', 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ', '0123456789', '-_']).default('').notEmpty()
+  ],
+  (req, res) => {
+    let sent = false
+    persist(async () => {
+      await Post.findOne({ where: { permalink: req.params.post } })
+        .then(result => {
+          if (result == null) {
+            return res.status(200).json({
+              status: 'OK',
+              data: []
+            })
+          } else {
+            console.log(result)
+          }
+        }).catch(err => {
+          console.log(err)
+          res.status(500).json({
+            status: 'error'
+          })
+          sent = true
+        })
+    }).then(result => {
+      if (!sent) {
+        return res.status(200).json({
+          status: 'OK'
+        })
+      }
+    }).catch(err => {
+      console.log(err)
+      if (!sent) {
+        res.status(500).json({
+          status: 'error'
+        })
+      }
+    })
   })
-})
 
 router.post('/get_comments/:post', [
-  check('userHandle').isLength({ max: 25 }),
-  check('message').isLength({ max: 250 }),
-  check('email').isEmail()
+  body('userHandle').isLength({ max: 25 }),
+  body('message').isLength({ max: 250 }),
+  body('email').isEmail()
 ],
 async (req, res) => {
   let sent = false
@@ -37,7 +72,9 @@ async (req, res) => {
       }
     }).catch(err => {
       console.log(err)
-      res.status(500).json('error')
+      res.status(500).json({
+        status: 'error'
+      })
       sent = true
     })
   }).then(result => {
@@ -49,7 +86,9 @@ async (req, res) => {
   }).catch(err => {
     console.log(err)
     if (!sent) {
-      res.status(500).json('error')
+      res.status(500).json({
+        status: 'error'
+      })
     }
   })
 })
