@@ -6,7 +6,7 @@ const { sequelize } = require('../models')
 const Comment = sequelize.models.Comment
 const Post = sequelize.models.Post
 
-router.get('/get_comments/:post',
+router.get('/comments/:post',
   [
     param('post').whitelist(['abcdefghijklmnñopqrstuvwxyz', 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ', '0123456789', '-_']).default('').notEmpty()
   ],
@@ -15,29 +15,43 @@ router.get('/get_comments/:post',
     persist(async () => {
       await Post.findOne({ where: { permalink: req.params.post } })
         .then(result => {
+          const count = (req.body.count !== undefined)
           if (result == null) {
             res.status(200).json({
               status: 'OK',
-              data: []
+              data: count ? 0 : []
             })
-            sent = true
           } else {
-            console.log(result)
+            Comment.findAll({ where: { postId: result.id } })
+              .then(it => {
+                res.status(200).json({
+                  status: 'OK',
+                  data: count
+                    ? it.length
+                    : it.map(item => {
+                      return {
+                        userHandle: item.userHandle,
+                        message: item.message,
+                        email: item.email
+                      }
+                    })
+                })
+              }).catch(err => {
+                console.log(err)
+                res.status(500).json({
+                  status: 'error'
+                })
+              })
           }
-        }).catch(err => {
+          sent = true
+        })
+        .catch(err => {
           console.log(err)
           res.status(500).json({
             status: 'error'
           })
           sent = true
         })
-    }).then(result => {
-      if (!sent) {
-        res.status(200).json({
-          status: 'OK'
-        })
-        sent = true
-      }
     }).catch(err => {
       console.log(err)
       if (!sent) {
@@ -48,7 +62,7 @@ router.get('/get_comments/:post',
     })
   })
 
-router.post('/get_comments/:post', [
+router.post('/comments/:post', [
   body('userHandle').isLength({ max: 25 }),
   body('message').isLength({ max: 250 }),
   body('email').isEmail()

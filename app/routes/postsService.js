@@ -99,13 +99,6 @@ router.post('/posts',
           })
           sent = true
         })
-    }).then(result => {
-      if (!sent) {
-        res.status(200).json({
-          status: 'OK'
-        })
-        sent = true
-      }
     }).catch(err => {
       console.log(err)
       if (!sent) {

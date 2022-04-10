@@ -5,7 +5,14 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class Comment extends Model {
     static associate (models) {
-      Comment.belongsTo(models.Post)
+      Comment.belongsTo(models.Post,
+        {
+          foreignKey: {
+            name: 'postId',
+            field: 'postId'
+          },
+          as: 'Post'
+        })
     }
   }
   Comment.init({
@@ -31,5 +38,7 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Comment'
   })
+
+  Comment.removeAttribute('PostId')
   return Comment
 }
