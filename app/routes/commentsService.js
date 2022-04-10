@@ -16,10 +16,11 @@ router.get('/get_comments/:post',
       await Post.findOne({ where: { permalink: req.params.post } })
         .then(result => {
           if (result == null) {
-            return res.status(200).json({
+            res.status(200).json({
               status: 'OK',
               data: []
             })
+            sent = true
           } else {
             console.log(result)
           }
@@ -32,9 +33,10 @@ router.get('/get_comments/:post',
         })
     }).then(result => {
       if (!sent) {
-        return res.status(200).json({
+        res.status(200).json({
           status: 'OK'
         })
+        sent = true
       }
     }).catch(err => {
       console.log(err)
@@ -79,7 +81,7 @@ async (req, res) => {
     })
   }).then(result => {
     if (!sent) {
-      return res.status(200).json({
+      res.status(200).json({
         status: 'OK'
       })
     }

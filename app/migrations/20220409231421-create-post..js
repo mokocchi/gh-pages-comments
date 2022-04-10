@@ -12,6 +12,16 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      allowComments: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
+      showComments: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -111,10 +121,35 @@ module.exports = {
         type: Sequelize.DATE
       }
     })
+    await queryInterface.createTable('Users', {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER
+      },
+      username: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      password: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      }
+    })
   },
   async down (queryInterface, Sequelize) {
     await queryInterface.dropTable('Replies')
     await queryInterface.dropTable('Comments')
     await queryInterface.dropTable('Posts')
+    await queryInterface.dropTable('Users')
   }
 }
