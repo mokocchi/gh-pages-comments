@@ -70,29 +70,41 @@ router.post('/comments/:post', [
 async (req, res) => {
   let sent = false
   persist(async () => {
-    await Comment.count().then(result => {
-      if (result > 2) {
-        console.log('Max comments for the post reached')
-        res.status(400).json({
-          status: 'error',
-          code: 'max_comments'
+    await Post.findOne({ where: { permalink: req.params.post } })
+      .then(async result => {
+        if (result == null) {
+          res.status(400).json({
+            status: 'error',
+            code: 'post_not_exists'
+          })
+        } else {
+          await Comment.count().then(count => {
+            if (count > 2) {
+              console.log('Max comments for the post reached')
+              res.status(400).json({
+                status: 'error',
+                code: 'max_comments'
+              })
+              sent = true
+            } else {
+              console.log(result.id)
+              Comment.create({
+                userHandle: req.body.userHandle,
+                message: req.body.message,
+                email: req.body.email,
+                date: new Date(),
+                postId: result.id
+              })
+            }
+          })
+        }
+      }).catch(err => {
+        console.log(err)
+        res.status(500).json({
+          status: 'error'
         })
         sent = true
-      } else {
-        Comment.create({
-          userHandle: req.body.userHandle,
-          message: req.body.message,
-          email: req.body.email,
-          date: new Date()
-        })
-      }
-    }).catch(err => {
-      console.log(err)
-      res.status(500).json({
-        status: 'error'
       })
-      sent = true
-    })
   }).then(result => {
     if (!sent) {
       res.status(200).json({
@@ -101,7 +113,8 @@ async (req, res) => {
     }
   }).catch(err => {
     console.log(err)
-    if (!sent) {
+    if (
+      !sent) {
       res.status(500).json({
         status: 'error'
       })
