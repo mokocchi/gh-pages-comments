@@ -14,7 +14,8 @@ app.use(cors({
     'Content-Disposition',
     'Packaging',
     'In-Progress',
-    'User-Agent'
+    'User-Agent',
+    'auth-token'
   ]
 }))
 app.options('*')
