@@ -15,7 +15,7 @@ router.get('/comments/:post',
     persist(async () => {
       await Post.findOne({ where: { permalink: req.params.post } })
         .then(result => {
-          const count = (req.body.count !== undefined)
+          const count = (req.query.count !== undefined)
           if (result == null) {
             res.status(200).json({
               status: 'OK',
