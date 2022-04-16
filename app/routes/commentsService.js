@@ -11,6 +11,15 @@ router.get('/comments/:post',
     param('post').whitelist(['abcdefghijklmnñopqrstuvwxyz', 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ', '0123456789', '-_']).default('').notEmpty()
   ],
   (req, res) => {
+    const { errors } = validationResult(req)
+    if (errors.length > 0) {
+      console.log(errors)
+      res.status(400).json({
+        status: 'error',
+        code: 'parameter_error'
+      })
+      return
+    }
     let sent = false
     persist(async () => {
       await Post.findOne({ where: { permalink: req.params.post } })

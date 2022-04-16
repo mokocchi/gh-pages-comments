@@ -1,5 +1,5 @@
 const express = require('express')
-const { param, body } = require('express-validator')
+const { param, body, validationResult } = require('express-validator')
 const router = express.Router()
 const { persist } = require('../sequelizeClient')
 const { sequelize } = require('../models')
@@ -63,6 +63,15 @@ router.post('/posts',
   ]
   ,
   (req, res) => {
+    const { errors } = validationResult(req)
+    if (errors.length > 0) {
+      console.log(errors)
+      res.status(400).json({
+        status: 'error',
+        code: 'parameter_error'
+      })
+      return
+    }
     let sent = false
     persist(async () => {
       await Post.findOne({ where: { permalink: req.body.permalink } })
@@ -117,6 +126,15 @@ router.get('/posts/:permalink',
   ,
   (req, res) => {
     persist(async () => {
+      const { errors } = validationResult(req)
+      if (errors.length > 0) {
+        console.log(errors)
+        res.status(400).json({
+          status: 'error',
+          code: 'parameter_error'
+        })
+        return
+      }
       Post.findOne({ where: { permalink: req.params.permalink } })
         .then(async result => {
           if (result === null) {
@@ -155,6 +173,15 @@ router.delete('/posts/:permalink',
   ]
   ,
   (req, res) => {
+    const { errors } = validationResult(req)
+    if (errors.length > 0) {
+      console.log(errors)
+      res.status(400).json({
+        status: 'error',
+        code: 'parameter_error'
+      })
+      return
+    }
     let sent = false
     persist(async () => {
       await Post.findOne({ where: { permalink: req.params.permalink } })
@@ -201,6 +228,15 @@ router.put('/posts/:permalink',
   ]
   ,
   (req, res) => {
+    const { errors } = validationResult(req)
+    if (errors.length > 0) {
+      console.log(errors)
+      res.status(400).json({
+        status: 'error',
+        code: 'parameter_error'
+      })
+      return
+    }
     let sent = false
     persist(async () => {
       await Post.findOne({ where: { permalink: req.params.permalink } })

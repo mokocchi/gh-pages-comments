@@ -1,5 +1,5 @@
 const express = require('express')
-const { body } = require('express-validator')
+const { body, validationResult } = require('express-validator')
 const router = express.Router()
 const { persist } = require('../sequelizeClient')
 const { sequelize } = require('../models')
@@ -12,6 +12,15 @@ router.post('/token',
     body('password').default('').notEmpty()
   ],
   (req, res) => {
+    const { errors } = validationResult(req)
+    if (errors.length > 0) {
+      console.log(errors)
+      res.status(400).json({
+        status: 'error',
+        code: 'parameter_error'
+      })
+      return
+    }
     persist(() => {
       User.findOne({ where: { username: req.body.username } })
         .then(async result => {
