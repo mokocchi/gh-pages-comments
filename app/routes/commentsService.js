@@ -1,5 +1,5 @@
 const express = require('express')
-const { param, body } = require('express-validator')
+const { param, body, validationResult } = require('express-validator')
 const router = express.Router()
 const { persist } = require('../sequelizeClient')
 const { sequelize } = require('../models')
@@ -63,11 +63,20 @@ router.get('/comments/:post',
   })
 
 router.post('/comments/:post', [
-  body('userHandle').isLength({ max: 25 }),
-  body('message').isLength({ max: 250 }),
-  body('email').isEmail()
+  body('userHandle').isLength({ max: 25 }).notEmpty(),
+  body('message').isLength({ max: 250 }).notEmpty(),
+  body('email').if(body('email').notEmpty()).isEmail()
 ],
 async (req, res) => {
+  const { errors } = validationResult(req)
+  if (errors.length > 0) {
+    console.log(errors)
+    res.status(400).json({
+      status: 'error',
+      code: 'parameter_error'
+    })
+    return
+  }
   let sent = false
   persist(async () => {
     await Post.findOne({ where: { permalink: req.params.post } })
