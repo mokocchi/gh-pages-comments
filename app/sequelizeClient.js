@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize')
 console.log(process.env.DATABASE_URL)
-const connectionString = `${process.env.DATABASE_URL}`
+const connectionString = `${process.env.DATABASE_URL}&sslmode=require`
 const client = new Sequelize(connectionString, {})
 
 const persist = async (callback = () => {}) => {
